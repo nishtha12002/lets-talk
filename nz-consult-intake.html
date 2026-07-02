@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NZ Student Consult — Intake</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap');
+
+  :root{
+    --ink:#1c2b28;
+    --paper:#f7f4ee;
+    --fern:#1f5c4a;
+    --fern-dark:#153f33;
+    --gold:#c98a3a;
+    --line:#d8d0c0;
+  }
+
+  *{box-sizing:border-box;}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .wrap{
+    max-width:520px;
+    margin:0 auto;
+    padding:40px 24px 64px;
+  }
+
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:var(--fern);
+    font-weight:600;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  .eyebrow::before{
+    content:"";
+    width:14px;
+    height:14px;
+    background:
+      radial-gradient(circle at 30% 30%, var(--gold) 0 2px, transparent 2.5px) no-repeat,
+      radial-gradient(circle at 65% 55%, var(--gold) 0 1.5px, transparent 2px) no-repeat,
+      radial-gradient(circle at 45% 75%, var(--gold) 0 1.5px, transparent 2px) no-repeat;
+    background-size:14px 14px;
+  }
+
+  h1{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:34px;
+    line-height:1.1;
+    margin:14px 0 8px;
+    color:var(--fern-dark);
+  }
+
+  .sub{
+    font-size:15px;
+    line-height:1.5;
+    color:#48544f;
+    margin:0 0 32px;
+  }
+
+  form{
+    display:flex;
+    flex-direction:column;
+    gap:22px;
+  }
+
+  .field{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+
+  label{
+    font-size:13px;
+    font-weight:600;
+    color:var(--fern-dark);
+  }
+
+  label .req{ color:var(--gold); }
+
+  input, select, textarea{
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:8px;
+    background:#fff;
+    color:var(--ink);
+    outline:none;
+    transition:border-color .15s ease;
+  }
+
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--fern);
+  }
+
+  textarea{
+    resize:vertical;
+    min-height:90px;
+    font-family:'Inter',sans-serif;
+  }
+
+  .options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .opt{
+    border:1.5px solid var(--line);
+    border-radius:999px;
+    padding:9px 16px;
+    font-size:13.5px;
+    cursor:pointer;
+    background:#fff;
+    user-select:none;
+    transition:all .15s ease;
+  }
+
+  .opt.active{
+    background:var(--fern);
+    border-color:var(--fern);
+    color:#fff;
+  }
+
+  .divider{
+    border:none;
+    border-top:1px solid var(--line);
+    margin:4px 0;
+  }
+
+  .price-note{
+    font-size:12.5px;
+    color:#6b756f;
+    margin-top:-4px;
+  }
+
+  button.submit{
+    margin-top:8px;
+    background:var(--fern);
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    padding:15px 20px;
+    font-size:15.5px;
+    font-weight:600;
+    font-family:'Inter',sans-serif;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+
+  button.submit:hover{ background:var(--fern-dark); }
+
+  button.submit:disabled{
+    background:#a9b3ae;
+    cursor:not-allowed;
+  }
+
+  .hint{
+    font-size:12px;
+    color:#8a9490;
+    text-align:center;
+    margin-top:2px;
+  }
+
+  .success{
+    display:none;
+    background:#eaf2ed;
+    border:1.5px solid var(--fern);
+    border-radius:10px;
+    padding:18px;
+    font-size:14px;
+    line-height:1.5;
+  }
+
+  .success.show{ display:block; }
+
+  .success a{
+    color:var(--fern-dark);
+    font-weight:600;
+  }
+
+  .pay-box{
+    background:#fff;
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:28px 20px;
+    text-align:center;
+    margin-bottom:8px;
+  }
+
+  .pay-amount{
+    font-family:'Fraunces',serif;
+    font-weight:700;
+    font-size:32px;
+    color:var(--fern-dark);
+  }
+
+  .pay-label{
+    font-size:13px;
+    color:#6b756f;
+    margin-bottom:18px;
+  }
+
+  #qrcode{
+    display:flex;
+    justify-content:center;
+    margin:6px 0 18px;
+  }
+
+  #qrcode canvas, #qrcode img{
+    border-radius:8px;
+    border:1px solid var(--line);
+  }
+
+  .pay-btn{
+    display:inline-block;
+    background:var(--fern);
+    color:#fff;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14.5px;
+    padding:13px 24px;
+    border-radius:8px;
+    transition:background .15s ease;
+  }
+
+  .pay-btn:hover{ background:var(--fern-dark); }
+
+  .upi-id{
+    font-size:12px;
+    color:#8a9490;
+    margin-top:14px;
+  }
+
+  .slot-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:8px;
+  }
+
+  .slot-btn{
+    border:1.5px solid var(--line);
+    border-radius:10px;
+    padding:12px 10px;
+    background:#fff;
+    text-align:left;
+    cursor:pointer;
+    font-size:13.5px;
+    line-height:1.4;
+    transition:all .15s ease;
+  }
+
+  .slot-btn .day{
+    font-weight:600;
+    color:var(--fern-dark);
+    display:block;
+  }
+
+  .slot-btn .time{
+    color:#6b756f;
+    font-size:12.5px;
+  }
+
+  .slot-btn:hover:not(.taken){
+    border-color:var(--fern);
+  }
+
+  .slot-btn.selected{
+    background:var(--fern);
+    border-color:var(--fern);
+  }
+
+  .slot-btn.selected .day, .slot-btn.selected .time{
+    color:#fff;
+  }
+
+  .slot-btn.taken{
+    background:#f0ede4;
+    border-color:var(--line);
+    cursor:not-allowed;
+    opacity:.55;
+  }
+
+  .slot-btn.taken .day::after{
+    content:" · booked";
+    font-weight:400;
+    color:#a08d5f;
+  }
+
+  .slot-note{
+    font-size:12.5px;
+    color:#8a9490;
+    margin-bottom:8px;
+    min-height:16px;
+  }
+
+  .disclaimer{
+    background:#fbf3e6;
+    border:1.5px solid #e8cfa0;
+    border-radius:10px;
+    padding:14px 16px;
+    font-size:13px;
+    line-height:1.55;
+    color:#5c4b28;
+  }
+
+  .check-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:13px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+
+  .check-row input{
+    margin-top:2px;
+    width:16px;
+    height:16px;
+    flex-shrink:0;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Step 1 of 3</div>
+  <h1>Pick a slot</h1>
+  <p class="sub">These are the times I've kept open. Once someone books a slot it's locked — no double-booking.</p>
+
+  <div class="slot-grid" id="slotGrid"></div>
+  <div class="slot-note" id="slotNote"></div>
+
+  <div class="eyebrow" style="margin-top:36px;">Step 2 of 3</div>
+  <h1>Pay to book</h1>
+  <p class="sub">Scan the QR or tap the button to pay via any UPI app (GPay, Paytm, PhonePe).</p>
+
+  <div class="pay-box">
+    <div class="pay-amount" id="payAmount">₹799</div>
+    <div class="pay-label">for a 40-min NZ consult call</div>
+    <div id="qrcode"></div>
+    <a id="upiPayBtn" class="pay-btn" href="#">Pay with UPI app</a>
+    <div class="upi-id">UPI ID: <span id="upiIdText"></span></div>
+  </div>
+
+  <div class="eyebrow" style="margin-top:36px;">Step 3 of 3</div>
+  <h1>Tell me about you</h1>
+  <p class="sub">This means I walk into our call already knowing what you need, instead of spending the first 10 minutes catching up.</p>
+
+  <form id="intakeForm">
+
+    <div class="field">
+      <label>Full name <span class="req">*</span></label>
+      <input type="text" id="name" required placeholder="Your name">
+    </div>
+
+    <div class="field">
+      <label>WhatsApp number <span class="req">*</span></label>
+      <input type="tel" id="phone" required placeholder="+91 98765 43210">
+    </div>
+
+    <div class="field">
+      <label>City you're in right now</label>
+      <input type="text" id="city" placeholder="e.g. Pune">
+    </div>
+
+    <hr class="divider">
+
+    <div class="field">
+      <label>Where are you in the process? <span class="req">*</span></label>
+      <div class="options" id="stageOptions">
+        <div class="opt" data-value="Exploring options">Exploring options</div>
+        <div class="opt" data-value="Shortlisting universities">Shortlisting unis</div>
+        <div class="opt" data-value="Applied, waiting">Applied, waiting</div>
+        <div class="opt" data-value="Offer in hand">Offer in hand</div>
+        <div class="opt" data-value="Already in NZ">Already in NZ</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>What do you mainly need help with? <span class="req">*</span></label>
+      <div class="options" id="topicOptions">
+        <div class="opt" data-value="Course/university selection">Course selection</div>
+        <div class="opt" data-value="Cost of living & budgeting">Cost of living</div>
+        <div class="opt" data-value="Part-time work & jobs">Part-time work</div>
+        <div class="opt" data-value="Settling in / life in NZ">Settling in</div>
+        <div class="opt" data-value="Something else">Something else</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Tell me a bit more</label>
+      <textarea id="details" placeholder="Anything specific you want to cover on the call?"></textarea>
+    </div>
+
+    <hr class="divider">
+
+    <div class="disclaimer">
+      <strong>Please note before booking:</strong> I'm not a licensed immigration adviser and this isn't immigration advice. I can only share what I've personally learned and experienced — course selection, day-to-day life, budgeting, adjusting to NZ — based on my own journey, not professional or legal guidance.
+    </div>
+
+    <label class="check-row">
+      <input type="checkbox" id="disclaimerCheck" required>
+      <span>I understand this is personal experience-based advice, not immigration advice <span class="req">*</span></span>
+    </label>
+
+    <button type="submit" class="submit" id="submitBtn">Send details on WhatsApp</button>
+    <div class="hint">Make sure you've selected a slot and paid before submitting</div>
+
+    <div class="success" id="successMsg">
+      ✅ Opening WhatsApp with your details filled in — just hit send.<br><br>
+      Didn't open automatically? <a id="waLink" href="#" target="_blank">Tap here instead</a>.
+    </div>
+
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  // ---- CONFIG: put your WhatsApp number here (with country code, no + or spaces) ----
+  const OWNER_WHATSAPP_NUMBER = "91XXXXXXXXXX"; // <-- replace with your number
+
+  // ---- CONFIG: payment details ----
+  const UPI_ID = "9306611535@ptyes";
+  const PAYEE_NAME = "NZ Student Consult"; // <-- replace with your name
+  const AMOUNT = "799"; // <-- change price here (in INR, no symbol)
+
+  // ---- CONFIG: available slots — edit this list to match your real availability ----
+  // "id" must be unique and stable (used to track bookings)
+  const AVAILABLE_SLOTS = [
+    { id: "2026-07-05-1000", day: "Sun, 5 Jul", time: "10:00 AM – 10:40 AM IST" },
+    { id: "2026-07-05-1800", day: "Sun, 5 Jul", time: "6:00 PM – 6:40 PM IST" },
+    { id: "2026-07-06-1900", day: "Mon, 6 Jul", time: "7:00 PM – 7:40 PM IST" },
+    { id: "2026-07-08-1900", day: "Wed, 8 Jul", time: "7:00 PM – 7:40 PM IST" },
+    { id: "2026-07-09-1000", day: "Thu, 9 Jul", time: "10:00 AM – 10:40 AM IST" },
+    { id: "2026-07-11-1800", day: "Sat, 11 Jul", time: "6:00 PM – 6:40 PM IST" },
+  ];
+
+  let bookedSlotIds = [];
+  let selectedSlot = null;
+
+  async function loadBookedSlots(){
+    try{
+      const result = await window.storage.get('booked-slot-ids', true);
+      bookedSlotIds = result ? JSON.parse(result.value) : [];
+    }catch(err){
+      bookedSlotIds = [];
+    }
+    renderSlots();
+  }
+
+  function renderSlots(){
+    const grid = document.getElementById('slotGrid');
+    grid.innerHTML = '';
+    AVAILABLE_SLOTS.forEach(slot => {
+      const taken = bookedSlotIds.includes(slot.id);
+      const btn = document.createElement('div');
+      btn.className = 'slot-btn' + (taken ? ' taken' : '') + (selectedSlot === slot.id ? ' selected' : '');
+      btn.innerHTML = `<span class="day">${slot.day}</span><span class="time">${slot.time}</span>`;
+      if(!taken){
+        btn.addEventListener('click', () => {
+          selectedSlot = slot.id;
+          renderSlots();
+          document.getElementById('slotNote').textContent = `Selected: ${slot.day}, ${slot.time}`;
+        });
+      }
+      grid.appendChild(btn);
+    });
+  }
+
+  loadBookedSlots();
+
+  document.getElementById('payAmount').textContent = `₹${AMOUNT}`;
+  document.getElementById('upiIdText').textContent = UPI_ID;
+
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${AMOUNT}&cu=INR&tn=${encodeURIComponent('NZ Consult Booking')}`;
+
+  document.getElementById('upiPayBtn').href = upiUrl;
+
+  new QRCode(document.getElementById("qrcode"), {
+    text: upiUrl,
+    width: 180,
+    height: 180,
+    colorDark: "#153f33",
+    colorLight: "#ffffff",
+  });
+
+  let stage = "";
+  let topic = "";
+
+  document.querySelectorAll('#stageOptions .opt').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('#stageOptions .opt').forEach(o => o.classList.remove('active'));
+      el.classList.add('active');
+      stage = el.dataset.value;
+    });
+  });
+
+  document.querySelectorAll('#topicOptions .opt').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('#topicOptions .opt').forEach(o => o.classList.remove('active'));
+      el.classList.add('active');
+      topic = el.dataset.value;
+    });
+  });
+
+  document.getElementById('intakeForm').addEventListener('submit', async function(e){
+    e.preventDefault();
+
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const details = document.getElementById('details').value.trim();
+    const agreed = document.getElementById('disclaimerCheck').checked;
+
+    if(!selectedSlot){
+      alert("Please pick a slot at the top of the page.");
+      return;
+    }
+    if(!name || !phone){
+      alert("Please fill in your name and WhatsApp number.");
+      return;
+    }
+    if(!stage){
+      alert("Please select where you are in the process.");
+      return;
+    }
+    if(!topic){
+      alert("Please select what you need help with.");
+      return;
+    }
+    if(!agreed){
+      alert("Please confirm you understand this is not immigration advice.");
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Checking slot...";
+
+    // re-check the slot hasn't been taken by someone else in the meantime
+    let latestBooked = [];
+    try{
+      const result = await window.storage.get('booked-slot-ids', true);
+      latestBooked = result ? JSON.parse(result.value) : [];
+    }catch(err){
+      latestBooked = [];
+    }
+
+    if(latestBooked.includes(selectedSlot)){
+      alert("Sorry, that slot was just taken. Please pick another.");
+      bookedSlotIds = latestBooked;
+      selectedSlot = null;
+      renderSlots();
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send details on WhatsApp";
+      return;
+    }
+
+    // freeze the slot
+    try{
+      latestBooked.push(selectedSlot);
+      await window.storage.set('booked-slot-ids', JSON.stringify(latestBooked), true);
+      bookedSlotIds = latestBooked;
+    }catch(err){
+      alert("Couldn't lock the slot due to a connection issue — please try again.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send details on WhatsApp";
+      return;
+    }
+
+    const slotInfo = AVAILABLE_SLOTS.find(s => s.id === selectedSlot);
+
+    let msg = `Hi! I'd like to book a NZ consult.\n\n`;
+    msg += `Name: ${name}\n`;
+    msg += `WhatsApp: ${phone}\n`;
+    if(city) msg += `City: ${city}\n`;
+    msg += `Slot: ${slotInfo.day}, ${slotInfo.time}\n`;
+    msg += `Stage: ${stage}\n`;
+    msg += `Topic: ${topic}\n`;
+    if(details) msg += `Details: ${details}\n`;
+    msg += `Payment: ₹${AMOUNT} via UPI\n`;
+
+    const encoded = encodeURIComponent(msg);
+    const waUrl = `https://wa.me/${OWNER_WHATSAPP_NUMBER}?text=${encoded}`;
+
+    document.getElementById('waLink').href = waUrl;
+    document.getElementById('successMsg').classList.add('show');
+    submitBtn.textContent = "Slot locked ✓";
+    renderSlots();
+
+    window.open(waUrl, '_blank');
+  });
+</script>
+
+</body>
+</html>
